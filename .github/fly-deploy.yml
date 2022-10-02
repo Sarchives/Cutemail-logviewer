@@ -1,0 +1,15 @@
+name: Fly Deploy
+on: [push]
+env:
+  FLY_API_TOKEN: ${{ secrets.FLY_TOKEN }}
+jobs:
+  deploy:
+      name: Deploy app
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v2
+        - uses: superfly/flyctl-actions/setup-flyctl@master
+        - name: Set secrets
+          run: flyctl secrets set MONGO_URI="${{ secrets.MONGO_URI }}" && flyctl secrets set LOG_URL_PREFIX="${{ secrets.LOG_URL_PREFIX }}" && flyctl secrets set HOST="${{ secrets.HOST }}" && flyctl secrets set PORT="${{ secrets.PORT }}"
+        - name: Deploy app
+          run: flyctl deploy --remote-only
